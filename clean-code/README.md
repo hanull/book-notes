@@ -40,7 +40,7 @@
 - 한 개념에 한 단어를 사용하라
   - (fetch, retrieve, get) , (controller, manager, driver) 처럼 섞어 쓰지 마라
 
-  ## 3장 - 함수
+## 3장 - 함수
 
 - 작게 만들어라
   - 들여쓰기 수준을 2단을 넘어서지 마라
