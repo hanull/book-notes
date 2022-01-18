@@ -70,3 +70,82 @@
 - 객체는 동작을 공개하고 자료를 숨긴다
 - 자료구조는 자료를 그대로 공개하며 별다른 함수는 제공하지 않는다
 - 시스템을 구현할 때, 새로운 자료 타입을 추가하는 유연성이 필요하다면 객체가 더 적합하고, 새로운 동작을 추가하는 유연성이 필요하면 절차지향 코드와 자료구조 형태가 더 적합하다
+
+## 7장 - 오류 처리
+
+- 오류를 일일이 확인하는 것보다 예외를 던지는게 더 깔끔하다
+- 미확인 예외(Unchecked Exception) 를 사용하라
+  - 왜 ? 하위 메소드에서 확인된 예외(Checked Exception) 를 던진다면, 모든 상위 메소드에서 이 예외에 대한 throws 절을 추가해야 하는 상황이 발생한다. 따라서 OCP 규칙을 위반한다.
+- 호출하는 메소드가 Exception을 활용해서  의미 있는 작업을 할 수 있다면, 확인 예외(Checked Exception을 사용하라.
+- 만약 호출하는 메소드가 Exception을 catch해서 예외 상황을 해결하거나 문제를 해결할 수 없다면, 미확인 예외(Unchecked Exception) 을 사용하라. 명확하지 않다면 미확인 예외(Unchecked Exception) 을 사용하라.
+
+- 예외에 의미있는 내용을 담아 오류가 발생한 원인, 위치를 파악하는 데 도움이 되게 하라
+
+- 호출자를 고려해 예외 클래스를 정의하라
+
+  ```java
+   ACMEPort port = new ACMEPort(12);
+  
+   try {
+       port.open();
+   } catch (DeviceResponseException e) {
+       reportPortError(e);
+       logger.log("Device response exception", e);
+   } catch (ATM1212UnlockedException e) {
+       reportPortError(e);
+       logger.log("Unlock exception", e);
+   } catch (GMXError e) {
+       reportPortError(e);
+       logger.log("Device response exception");
+   } finally {
+       ...
+   }
+  ```
+
+  - 위의 코드를 보면 매번 open()을 호출하는 곳에서 예외 처리를 해줘야 한다. 즉, 의존성이 높고 오류가 하나만 늘어도 해당 메소드를 호출하는 모든 곳을 찾아 추가해줘야 하는 문제가 있다.
+  - 해당 문제를 별도의 클래스로 감싸서 예외를 처리하는 방법으로 해결할 수 있다. (아래 코드 확인)
+    - 에러 처리가 간결해짐
+    - 외부 라이브러리와 프로그램 사이의 의존성이 줄어듬
+    - 프로그램 테스트가 쉬워짐
+
+  ```java
+  public class LocalPort {
+  
+    private ACMEPort innerPort;
+  
+    public void open() {
+  		try { 
+  			innerPort.open();
+  		} catch (DeviceResponseException e) {
+  			// 내부에서 약속된 하나의 에러 패턴을 사용.
+  			throw new PortDeviceFailuer(e);
+  	  } catch (NetworkErrorException e) { 
+  			throw new PortDeviceFailuer(e);
+  	  } catch (BindingException e) {
+  			throw new PortDeviceFailuer(e);
+  	  } catch ....
+  	  }
+  	}
+  }
+  ```
+
+- null 을 반환하지 마라
+
+  - 빈 리스트(`Collections.emptyList()`)와 같은 특수한 사례 객체를 만들어 반환한다.
+
+  ```java
+  List<Employee> emploees = getEmployees();
+  if (employees != null) {
+    for(Employee e : employees) {
+      totalPay += e.getPay();
+    }
+  }
+  
+  // 수정 후
+  List<Employee> emploees = getEmployees();
+  for(Employee e : employees) {
+    totalPay += e.getPay();
+  }
+  ```
+
+- null 을 넘기지마라
