@@ -149,3 +149,30 @@
   ```
 
 - null 을 넘기지마라
+
+## 8장 - 경계
+
+Map과 같은 공개된 인터페이스를 사용할 때 문제점이 있다.
+
+1. map 인스턴스를 전달받은 쪽에서 마음대로 추가하거나 삭제할 수 있다.
+2. map 인스턴스를 여기저기로 넘긴다면, Map 인터페이스가 변할 경우, 수정할 코드가 상당히 많아진다.
+
+### 해결 방법
+
+1. `캡슐화` 한다.
+
+```java
+public class Sensors {
+  private Map sensors = new HashMap();
+  
+  public Sensor getById(String id) {
+    return (Sensor) sensors.get(id);
+  }
+}
+```
+
+- Map 인터페이스가 변하더라도 나머지 프로그램에는 영향을 미치지 않는다.
+- 원하는 기능만 공개해 코드를 보호할 수 있다.
+- Map 클래스를 사용할 때마다 캡슐화하라는 것은 아니다. Map 인스턴스를 공개 API의 인수로 넘기거나 반환값으로 사용하지 말라는 말이다.
+
+2. `Adapter pattern` 을 사용한다. 
