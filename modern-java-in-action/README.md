@@ -4,6 +4,7 @@
 
 ## Part ⅠⅠ : 함수형 데이터 처리
 - [Chapter4 : 스트림 소개](https://github.com/hanull/book-notes/tree/main/modern-java-in-action/chapter4)
+- [Chapter5 : 스트림 활용](https://github.com/hanull/book-notes/tree/main/modern-java-in-action/chapter5)
 
 ## Part ⅠⅠⅠ : 스트림과 람다를 이용한 효과적인 프로그래밍
 ## Part IV : 매일 자바와 함께
